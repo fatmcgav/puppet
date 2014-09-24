@@ -232,7 +232,14 @@ module Puppet
       :hook             => proc do |value|
         $LOAD_PATH.delete(@oldlibdir) if defined?(@oldlibdir) and $LOAD_PATH.include?(@oldlibdir)
         @oldlibdir = value
-        $LOAD_PATH << value
+        if value.include?(File::PATH_SEPARATOR)
+          values = value.split(File::PATH_SEPARATOR)
+          values.each do |value|
+            $LOAD_PATH << value
+          end
+        else
+          $LOAD_PATH << value
+        end
       end
     },
     :ignoreimport => {

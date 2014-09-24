@@ -28,14 +28,24 @@ describe Puppet do
   it "should change $LOAD_PATH when :libdir changes" do
     one = tmpdir('load-path-one')
     two = tmpdir('load-path-two')
+    three = tmpdir('load-path-three')
     one.should_not == two
+    one.should_not == three
 
     Puppet[:libdir] = one
     $LOAD_PATH.should include one
     $LOAD_PATH.should_not include two
+    $LOAD_PATH.should_not include three
 
     Puppet[:libdir] = two
     $LOAD_PATH.should_not include one
     $LOAD_PATH.should include two
+    $LOAD_PATH.should_not include three
+
+    Puppet[:libdir] = [one, three].join(':')
+    $LOAD_PATH.should include one
+    $LOAD_PATH.should_not include two
+    $LOAD_PATH.should include three
+    
   end
 end
